@@ -39,7 +39,7 @@ fn addNativeBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, str
         .link_libc = true,
     });
     const exe = b.addExecutable(.{
-        .name = "sdl-emscripten",
+        .name = config.game_title,
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
@@ -122,7 +122,7 @@ fn addEmscriptenBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode)
 
     const exe = try compileEmscripten(
         b,
-        "sdl-emscripten",
+        config.game_title,
         b.path("src/main.zig"),
         target,
         optimize,
@@ -135,7 +135,7 @@ fn addEmscriptenBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode)
         .target = target,
         .optimize = optimize,
     });
-    var run = emRunStep(b, .{ .name = "sdl-emscripten" });
+    var run = emRunStep(b, .{ .name = config.game_title });
     run.step.dependOn(&linkStep.step);
     const run_cmd = b.step("run", "Run the web demo");
     run_cmd.dependOn(&run.step);
