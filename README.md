@@ -1,5 +1,7 @@
 # Zig SDL Template
 
+Zig version: 0.14.0-dev.2287+70ad7dcd4
+
 ## Features
 - Asset loading.
 - Wasm compilation with emscripten.
