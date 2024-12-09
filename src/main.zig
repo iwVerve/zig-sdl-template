@@ -15,8 +15,7 @@ pub fn main() !void {
     defer game.deinit();
 
     if (builtin.target.isWasm()) {
-        emscripten_game = &game;
-        c.emscripten_set_main_loop(&emscripten_main_loop, 0, true);
+        c.emscripten_set_main_loop_arg(&emscripten_main_loop, &game, 0, true);
     } else {
         while (game.running) {
             try game.update();
@@ -24,7 +23,7 @@ pub fn main() !void {
     }
 }
 
-var emscripten_game: *Game = undefined;
-fn emscripten_main_loop() callconv(.C) void {
-    Game.update(emscripten_game) catch {};
+fn emscripten_main_loop(game_ptr: ?*anyopaque) callconv(.C) void {
+    const game: *Game = @ptrCast(@alignCast(game_ptr));
+    game.update() catch {};
 }

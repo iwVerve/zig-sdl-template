@@ -74,6 +74,7 @@ fn initGame(self: *Game) !void {
     self.last_time_count = c.SDL_GetPerformanceCounter();
     try self.assets.init(self.renderer);
 
+    // self.state = .menu;
     self.state = .{ .fox = FoxState.init(0) };
     try self.tick(1 / self.tick_rate);
 }
