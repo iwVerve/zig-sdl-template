@@ -7,6 +7,14 @@ const FoxState = @import("FoxState.zig");
 
 const MenuState = @This();
 
+const text =
+    \\Hello, world!
+    \\
+    \\Enter to start
+    \\Escape to quit
+    \\Space to speed up
+;
+
 pub fn init() MenuState {
     return .{};
 }
@@ -31,7 +39,25 @@ pub fn draw(self: MenuState, renderer: *c.SDL_Renderer, assets: Assets, interpol
     _ = c.SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     _ = c.SDL_RenderClear(renderer);
 
+    const surface = c.TTF_RenderUTF8_Blended_Wrapped(assets.menu, text, .{ .r = 255, .g = 255, .b = 255 }, 1024);
+    defer c.SDL_FreeSurface(surface);
+
+    const texture = c.SDL_CreateTextureFromSurface(renderer, surface);
+    defer c.SDL_DestroyTexture(texture);
+
+    var width: c_int = undefined;
+    var height: c_int = undefined;
+    _ = c.SDL_QueryTexture(texture, null, null, &width, &height);
+
+    const rect: c.SDL_Rect = .{
+        .x = 32,
+        .y = 32,
+        .w = width,
+        .h = height,
+    };
+
+    _ = c.SDL_RenderCopy(renderer, texture, null, &rect);
+
     _ = self;
-    _ = assets;
     _ = interpolation;
 }

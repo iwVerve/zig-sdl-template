@@ -15,6 +15,7 @@ const sdl_dependencies: []const SDLDependency = &.{
     .{ .name = "sdl2", .lib_name = "SDL2" },
     .{ .name = "sdl2image", .lib_name = "SDL2_image" },
     .{ .name = "sdl2mixer", .lib_name = "SDL2_mixer" },
+    .{ .name = "sdl2ttf", .lib_name = "SDL2_ttf" },
 };
 
 pub fn build(b: *Build) !void {

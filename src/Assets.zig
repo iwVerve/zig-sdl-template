@@ -19,10 +19,17 @@ const asset_data = .{
             .{ "speedup", "speedup.wav" },
         },
     },
+    .fonts = .{
+        .path = "fonts/",
+        .entries = .{
+            .{ "menu", "BarlowCondensed-Regular.ttf", 24 },
+        },
+    },
 };
 
 fox: *c.SDL_Texture = undefined,
 speedup: [*c]c.Mix_Chunk = undefined,
+menu: *c.TTF_Font = undefined,
 
 pub fn init(self: *Assets, renderer: *c.SDL_Renderer) !void {
     inline for (asset_data.textures.entries) |texture_entry| {
@@ -50,6 +57,15 @@ pub fn init(self: *Assets, renderer: *c.SDL_Renderer) !void {
         }
 
         field.* = sound;
+    }
+
+    inline for (asset_data.fonts.entries) |font_entry| {
+        const field = &@field(self, font_entry[0]);
+        const path = asset_data.dir ++ asset_data.fonts.path ++ font_entry[1];
+
+        const font = c.TTF_OpenFont(path, font_entry[2]) orelse return error.OpenFont;
+
+        field.* = font;
     }
 }
 

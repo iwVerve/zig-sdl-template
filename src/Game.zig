@@ -45,6 +45,10 @@ fn initWindow(self: *Game) !void {
         return error.MixInitialization;
     }
 
+    if (c.TTF_Init() < 0) {
+        return error.TTFInitialization;
+    }
+
     self.window = c.SDL_CreateWindow(
         config.game_title,
         c.SDL_WINDOWPOS_UNDEFINED,
@@ -93,7 +97,9 @@ fn deinitGame(self: *Game) void {
 }
 
 fn deinitWindow(self: *Game) void {
+    c.TTF_Quit();
     c.SDL_CloseAudio();
+    c.IMG_Quit();
     c.SDL_DestroyRenderer(self.renderer);
     c.SDL_DestroyWindow(self.window);
     c.SDL_Quit();

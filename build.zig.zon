@@ -15,6 +15,10 @@
             .url = "https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.0/SDL2_mixer-devel-2.8.0-VC.zip",
             .hash = "1220968acbc0366b2d06cbb42f825e6f17718a789eb69fe22e9d5018275cb5389142",
         },
+        .sdl2ttf = .{
+            .url = "https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.22.0/SDL2_ttf-devel-2.22.0-VC.zip",
+            .hash = "1220f8d07d04edc7b3aa3208d3dee7fba95278239016b961bfb118a33816313cc668",
+        },
         .emsdk = .{
             .url = "https://github.com/emscripten-core/emsdk/archive/6abe5123c34a7751a2d5b679e856b2591ba04145.zip",
             .hash = "1220d2b37748757d43de92f0ef723b6a00c3cae4b6a9c582b607421704498a5cfd2b",
