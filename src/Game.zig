@@ -5,12 +5,11 @@ const c = @import("c");
 const Assets = @import("Assets.zig");
 const config = @import("config.zig");
 const util = @import("util.zig");
+const Fox = @import("Fox.zig");
 
 const Allocator = std.mem.Allocator;
 
 const Game = @This();
-
-const FPoint = struct { x: f32, y: f32 };
 
 allocator: Allocator,
 window: *c.SDL_Window = undefined,
@@ -22,14 +21,7 @@ tick_rate: f32 = 60,
 last_time_count: u64 = undefined,
 tick_time_left: u64 = 0,
 
-fox_angle: f32 = 0,
-fox_pos: util.InterpolatedVector2 = undefined,
-
-const fox = .{
-    .center = .{ .x = config.resolution.width / 2, .y = config.resolution.height / 2 },
-    .size = .{ .w = 64, .h = 64 },
-    .distance = 96,
-};
+fox: Fox = undefined,
 
 pub fn init(self: *Game) !void {
     try self.initWindow();
@@ -74,7 +66,7 @@ fn initGame(self: *Game) !void {
     self.last_time_count = c.SDL_GetPerformanceCounter();
     try self.assets.init(self.renderer);
 
-    self.fox_pos.set(getFoxPosition(self.fox_angle));
+    self.fox = Fox.init(0);
 
     try self.tick(1 / self.tick_rate);
 }
@@ -131,31 +123,14 @@ pub fn update(self: *Game) !void {
 }
 
 fn tick(self: *Game, delta_time: f32) !void {
-    self.fox_angle += delta_time * 90;
-    self.fox_pos.set(getFoxPosition(self.fox_angle));
-}
-
-fn getFoxPosition(angle: f32) util.Vector2 {
-    const math = std.math;
-
-    return .{
-        .x = fox.center.x - fox.size.w / 2 + fox.distance * @cos(math.degreesToRadians(angle)),
-        .y = fox.center.y - fox.size.h / 2 - fox.distance * @sin(math.degreesToRadians(angle)),
-    };
+    self.fox.update(delta_time);
 }
 
 fn draw(self: *Game, interpolation: f32) !void {
     _ = c.SDL_SetRenderDrawColor(self.renderer, 127, 255, 255, 255);
     _ = c.SDL_RenderClear(self.renderer);
 
-    const draw_pos = self.fox_pos.get(interpolation);
-    const rect: c.SDL_Rect = .{
-        .x = @intFromFloat(draw_pos.x),
-        .y = @intFromFloat(draw_pos.y),
-        .w = fox.size.w,
-        .h = fox.size.h,
-    };
-    _ = c.SDL_RenderCopy(self.renderer, self.assets.fox, null, &rect);
+    self.fox.draw(self.renderer, self.assets, interpolation);
 
     c.SDL_RenderPresent(self.renderer);
 }

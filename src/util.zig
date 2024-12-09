@@ -9,6 +9,13 @@ pub const InterpolatedVector2 = struct {
     current: Vector2,
     prev: Vector2,
 
+    pub fn init(vector: Vector2) InterpolatedVector2 {
+        return .{
+            .current = vector,
+            .prev = vector,
+        };
+    }
+
     pub fn set(self: *InterpolatedVector2, new: Vector2) void {
         self.prev = self.current;
         self.current = new;
