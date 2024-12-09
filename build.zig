@@ -14,6 +14,7 @@ const ArrayList = std.ArrayList;
 const sdl_dependencies: []const SDLDependency = &.{
     .{ .name = "sdl2", .lib_name = "SDL2" },
     .{ .name = "sdl2image", .lib_name = "SDL2_image" },
+    .{ .name = "sdl2mixer", .lib_name = "SDL2_mixer" },
 };
 
 pub fn build(b: *Build) !void {
@@ -281,6 +282,7 @@ fn emLinkStep(b: *Build, options: EmLinkOptions) !*Run {
     try emcc_cmd.append("-sUSE_SDL_IMAGE=2");
     try emcc_cmd.append("-sUSE_LIBPNG");
     try emcc_cmd.append("-sSDL2_IMAGE_FORMATS=['png']");
+    try emcc_cmd.append("-sUSE_SDL_MIXER=2");
 
     try emcc_cmd.append("-sGL_ENABLE_GET_PROC_ADDRESS=1");
     try emcc_cmd.append("-sINITIAL_MEMORY=64Mb");

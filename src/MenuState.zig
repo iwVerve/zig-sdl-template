@@ -14,6 +14,11 @@ pub fn init() MenuState {
 pub fn update(game: *Game, delta_time: f32) !void {
     const self = &game.state.menu;
 
+    if (game.input.exit.pressed) {
+        game.running = false;
+        return;
+    }
+
     if (game.input.confirm.pressed) {
         game.state = .{ .fox = FoxState.init(0) };
     }

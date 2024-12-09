@@ -2,7 +2,7 @@ const std = @import("std");
 const c = @import("c");
 
 const Assets = @import("Assets.zig");
-const Fox = @import("Fox.zig");
+const Fox = @import("FoxState/Fox.zig");
 const Game = @import("Game.zig");
 const MenuState = @import("MenuState.zig");
 

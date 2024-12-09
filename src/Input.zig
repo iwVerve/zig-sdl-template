@@ -10,13 +10,17 @@ const Key = struct {
     held: bool = false,
 
     pub fn press(self: *Key) void {
-        self.pressed = true;
-        self.held = true;
+        if (!self.held) {
+            self.pressed = true;
+            self.held = true;
+        }
     }
 
     pub fn release(self: *Key) void {
-        self.released = true;
-        self.held = false;
+        if (self.held) {
+            self.released = true;
+            self.held = false;
+        }
     }
 
     pub fn clear(self: *Key) void {

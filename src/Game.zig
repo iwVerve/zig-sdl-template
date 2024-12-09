@@ -33,12 +33,16 @@ pub fn init(self: *Game) !void {
 }
 
 fn initWindow(self: *Game) !void {
-    if (c.SDL_Init(c.SDL_INIT_VIDEO) < 0) {
+    if (c.SDL_Init(c.SDL_INIT_VIDEO | c.SDL_INIT_AUDIO) < 0) {
         return error.SDLInitialization;
     }
 
     if (c.IMG_Init(c.IMG_INIT_PNG) < 0) {
         return error.IMGInitialization;
+    }
+
+    if (c.Mix_OpenAudio(44100, c.AUDIO_S16SYS, 2, 4096) < 0) {
+        return error.MixInitialization;
     }
 
     self.window = c.SDL_CreateWindow(
@@ -89,6 +93,7 @@ fn deinitGame(self: *Game) void {
 }
 
 fn deinitWindow(self: *Game) void {
+    c.SDL_CloseAudio();
     c.SDL_DestroyRenderer(self.renderer);
     c.SDL_DestroyWindow(self.window);
     c.SDL_Quit();

@@ -7,13 +7,17 @@
             .url = "https://github.com/libsdl-org/SDL/releases/download/release-2.30.9/SDL2-devel-2.30.9-VC.zip",
             .hash = "1220aacabc5f8302e628b504eca708f46598841255732a0f39eb5ee7525c5d53f4ff",
         },
-        .emsdk = .{
-            .url = "https://github.com/emscripten-core/emsdk/archive/6abe5123c34a7751a2d5b679e856b2591ba04145.zip",
-            .hash = "1220d2b37748757d43de92f0ef723b6a00c3cae4b6a9c582b607421704498a5cfd2b",
-        },
         .sdl2image = .{
             .url = "https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-devel-2.8.2-VC.zip",
             .hash = "12203dbf03e7f743a230084121af24815363ccd48448cbbf59caf810130951a589aa",
+        },
+        .sdl2mixer = .{
+            .url = "https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.0/SDL2_mixer-devel-2.8.0-VC.zip",
+            .hash = "1220968acbc0366b2d06cbb42f825e6f17718a789eb69fe22e9d5018275cb5389142",
+        },
+        .emsdk = .{
+            .url = "https://github.com/emscripten-core/emsdk/archive/6abe5123c34a7751a2d5b679e856b2591ba04145.zip",
+            .hash = "1220d2b37748757d43de92f0ef723b6a00c3cae4b6a9c582b607421704498a5cfd2b",
         },
     },
     .paths = .{
