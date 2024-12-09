@@ -10,9 +10,11 @@ pub const install_dirs = &.{
 
 // GAME
 
-pub const frame_rate = 60;
+pub const default_tick_rate = 60;
 
 pub const resolution = .{
     .width = 640,
     .height = 360,
 };
+
+pub const max_seconds_per_frame = 1;

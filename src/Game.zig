@@ -5,11 +5,14 @@ const c = @import("c");
 const Assets = @import("Assets.zig");
 const config = @import("config.zig");
 const util = @import("util.zig");
-const Fox = @import("Fox.zig");
+const MenuState = @import("MenuState.zig");
+const FoxState = @import("FoxState.zig");
+const Input = @import("Input.zig");
 
 const Allocator = std.mem.Allocator;
 
 const Game = @This();
+const State = union(enum) { menu: MenuState, fox: FoxState };
 
 allocator: Allocator,
 window: *c.SDL_Window = undefined,
@@ -17,11 +20,12 @@ renderer: *c.SDL_Renderer = undefined,
 assets: Assets = .{},
 
 running: bool = true,
-tick_rate: f32 = 60,
+tick_rate: f32 = config.default_tick_rate,
 last_time_count: u64 = undefined,
 tick_time_left: u64 = 0,
 
-fox: Fox = undefined,
+state: State = undefined,
+input: Input = .{},
 
 pub fn init(self: *Game) !void {
     try self.initWindow();
@@ -66,8 +70,7 @@ fn initGame(self: *Game) !void {
     self.last_time_count = c.SDL_GetPerformanceCounter();
     try self.assets.init(self.renderer);
 
-    self.fox = Fox.init(0);
-
+    self.state = .{ .fox = FoxState.init(0) };
     try self.tick(1 / self.tick_rate);
 }
 
@@ -99,12 +102,17 @@ pub fn update(self: *Game) !void {
                 self.running = false;
                 return;
             },
+            c.SDL_KEYDOWN => {
+                self.input.press(event.key.keysym.sym);
+            },
+            c.SDL_KEYUP => {
+                self.input.release(event.key.keysym.sym);
+            },
             else => {},
         }
     }
 
-    const max_seconds_per_frame = 1;
-    const max_time_per_frame: u64 = max_seconds_per_frame * c.SDL_GetPerformanceFrequency();
+    const max_time_per_frame: u64 = config.max_seconds_per_frame * c.SDL_GetPerformanceFrequency();
 
     const start = c.SDL_GetPerformanceCounter();
     self.tick_time_left += @min(start - self.last_time_count, max_time_per_frame);
@@ -123,14 +131,19 @@ pub fn update(self: *Game) !void {
 }
 
 fn tick(self: *Game, delta_time: f32) !void {
-    self.fox.update(delta_time);
+    switch (self.state) {
+        .menu => try MenuState.update(self, delta_time),
+        .fox => try FoxState.update(self, delta_time),
+    }
+
+    self.input.clear();
 }
 
 fn draw(self: *Game, interpolation: f32) !void {
-    _ = c.SDL_SetRenderDrawColor(self.renderer, 127, 255, 255, 255);
-    _ = c.SDL_RenderClear(self.renderer);
-
-    self.fox.draw(self.renderer, self.assets, interpolation);
+    switch (self.state) {
+        .menu => |s| s.draw(self.renderer, self.assets, interpolation),
+        .fox => |s| s.draw(self.renderer, self.assets, interpolation),
+    }
 
     c.SDL_RenderPresent(self.renderer);
 }
