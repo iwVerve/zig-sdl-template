@@ -3,59 +3,59 @@ const c = @import("c");
 
 const Input = @This();
 
-const Key = struct {
-    sym: i32,
+const KeyInput = struct {
+    key: i32,
     pressed: bool = false,
     released: bool = false,
     held: bool = false,
 
-    pub fn press(self: *Key) void {
+    pub fn press(self: *KeyInput) void {
         if (!self.held) {
             self.pressed = true;
             self.held = true;
         }
     }
 
-    pub fn release(self: *Key) void {
+    pub fn release(self: *KeyInput) void {
         if (self.held) {
             self.released = true;
             self.held = false;
         }
     }
 
-    pub fn clear(self: *Key) void {
+    pub fn clear(self: *KeyInput) void {
         self.pressed = false;
         self.released = false;
     }
 };
 
-confirm: Key = .{ .sym = c.SDLK_RETURN },
-exit: Key = .{ .sym = c.SDLK_ESCAPE },
-speedup: Key = .{ .sym = c.SDLK_SPACE },
+confirm: KeyInput = .{ .key = c.SDLK_RETURN },
+exit: KeyInput = .{ .key = c.SDLK_ESCAPE },
+speedup: KeyInput = .{ .key = c.SDLK_SPACE },
 
-const key_names = .{ "confirm", "exit", "speedup" };
+pub const key_names = .{ "confirm", "exit", "speedup" };
 
-pub fn press(self: *Input, sym: i32) void {
+pub fn press(self: *Input, key: i32) void {
     inline for (key_names) |key_name| {
-        const key = &@field(self, key_name);
-        if (key.sym == sym) {
-            key.press();
+        const key_input = &@field(self, key_name);
+        if (key_input.key == key) {
+            key_input.press();
         }
     }
 }
 
-pub fn release(self: *Input, sym: i32) void {
+pub fn release(self: *Input, key: i32) void {
     inline for (key_names) |key_name| {
-        const key = &@field(self, key_name);
-        if (key.sym == sym) {
-            key.release();
+        const key_input = &@field(self, key_name);
+        if (key_input.key == key) {
+            key_input.release();
         }
     }
 }
 
 pub fn clear(self: *Input) void {
     inline for (key_names) |key_name| {
-        const key = &@field(self, key_name);
-        key.clear();
+        const key_input = &@field(self, key_name);
+        key_input.clear();
     }
 }

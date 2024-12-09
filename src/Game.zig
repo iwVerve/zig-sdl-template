@@ -74,8 +74,7 @@ fn initGame(self: *Game) !void {
     self.last_time_count = c.SDL_GetPerformanceCounter();
     try self.assets.init(self.renderer);
 
-    // self.state = .menu;
-    self.state = .{ .fox = FoxState.init(0) };
+    self.state = .menu;
     try self.tick(1 / self.tick_rate);
 }
 
@@ -109,10 +108,18 @@ pub fn update(self: *Game) !void {
                 return;
             },
             c.SDL_KEYDOWN => {
-                self.input.press(event.key.keysym.sym);
+                const key = if (builtin.target.isWasm())
+                    event.key.keysym.mod
+                else
+                    event.key.keysym.sym;
+                self.input.press(key);
             },
             c.SDL_KEYUP => {
-                self.input.release(event.key.keysym.sym);
+                const key = if (builtin.target.isWasm())
+                    event.key.keysym.mod
+                else
+                    event.key.keysym.sym;
+                self.input.release(key);
             },
             else => {},
         }
