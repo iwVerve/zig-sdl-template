@@ -47,7 +47,7 @@ fn addNativeBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, str
         .optimize = optimize,
         .strip = strip,
     });
-    if (target.result.os.tag == .windows) {
+    if (target.result.os.tag == .windows and optimize != .Debug) {
         exe.subsystem = .Windows;
     }
 
@@ -284,6 +284,7 @@ fn emLinkStep(b: *Build, options: EmLinkOptions) !*Run {
     try emcc_cmd.append("-sUSE_LIBPNG");
     try emcc_cmd.append("-sSDL2_IMAGE_FORMATS=['png']");
     try emcc_cmd.append("-sUSE_SDL_MIXER=2");
+    try emcc_cmd.append("-sUSE_SDL_TTF=2");
 
     try emcc_cmd.append("-sGL_ENABLE_GET_PROC_ADDRESS=1");
     try emcc_cmd.append("-sINITIAL_MEMORY=64Mb");

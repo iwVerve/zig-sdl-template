@@ -114,18 +114,10 @@ pub fn update(self: *Game) !void {
                 return;
             },
             c.SDL_KEYDOWN => {
-                const key = if (builtin.target.isWasm())
-                    event.key.keysym.mod
-                else
-                    event.key.keysym.sym;
-                self.input.press(key);
+                self.input.press(event.key.keysym.sym);
             },
             c.SDL_KEYUP => {
-                const key = if (builtin.target.isWasm())
-                    event.key.keysym.mod
-                else
-                    event.key.keysym.sym;
-                self.input.release(key);
+                self.input.press(event.key.keysym.sym);
             },
             else => {},
         }
