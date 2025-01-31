@@ -5,9 +5,10 @@ const c = @import("c");
 const Assets = @import("Assets.zig");
 const config = @import("config.zig");
 const util = @import("util.zig");
-const State = @import("state.zig").State;
-const MenuState = @import("MenuState.zig");
-const FoxState = @import("FoxState.zig");
+const states = @import("states.zig");
+const State = states.State;
+const MenuState = states.MenuState;
+const FoxState = states.FoxState;
 const Input = @import("Input.zig");
 
 const Allocator = std.mem.Allocator;

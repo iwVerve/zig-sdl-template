@@ -1,10 +1,10 @@
 const std = @import("std");
 const c = @import("c");
 
-const config = @import("../config.zig");
-const util = @import("../util.zig");
-const Assets = @import("../Assets.zig");
-const Game = @import("../Game.zig");
+const config = @import("../../config.zig");
+const util = @import("../../util.zig");
+const Assets = @import("../../Assets.zig");
+const Game = @import("../../Game.zig");
 
 const Fox = @This();
 

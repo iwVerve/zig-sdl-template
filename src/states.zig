@@ -1,5 +1,5 @@
-const MenuState = @import("MenuState.zig");
-const FoxState = @import("FoxState.zig");
+pub const MenuState = @import("states/MenuState.zig");
+pub const FoxState = @import("states/FoxState.zig");
 
 pub const State = union(enum) {
     menu: MenuState,
