@@ -5,6 +5,7 @@ const c = @import("c");
 const Assets = @import("Assets.zig");
 const config = @import("config.zig");
 const util = @import("util.zig");
+const State = @import("state.zig").State;
 const MenuState = @import("MenuState.zig");
 const FoxState = @import("FoxState.zig");
 const Input = @import("Input.zig");
@@ -12,7 +13,6 @@ const Input = @import("Input.zig");
 const Allocator = std.mem.Allocator;
 
 const Game = @This();
-const State = union(enum) { menu: MenuState, fox: FoxState };
 
 allocator: Allocator,
 window: *c.SDL_Window = undefined,
@@ -94,6 +94,7 @@ pub export fn deinit(self: *Game) void {
 
 fn deinitGame(self: *Game) void {
     self.assets.deinit();
+    self.state.deinitCurrent();
 }
 
 fn deinitWindow(self: *Game) void {
@@ -162,12 +163,4 @@ fn draw(self: *Game, interpolation: f32) !void {
 export fn updateWrapper(self: *Game) c_int {
     self.update() catch return 1;
     return 0;
-}
-
-pub fn changeState(self: *Game, state: State) !void {
-    switch (self.state) {
-        .menu => |*m| m.deinit(),
-        else => {},
-    }
-    self.state = state;
 }

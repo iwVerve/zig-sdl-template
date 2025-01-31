@@ -43,7 +43,8 @@ pub fn update(game: *Game, delta_time: f32) !void {
     }
 
     if (game.input.confirm.pressed) {
-        try game.changeState(.{ .fox = FoxState.init(0) });
+        game.state.change(.{ .fox = FoxState.init(0) });
+        return;
     }
 }
 

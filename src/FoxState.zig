@@ -20,7 +20,7 @@ pub fn update(game: *Game, delta_time: f32) !void {
     const self = &game.state.fox;
 
     if (game.input.exit.pressed) {
-        try game.changeState(.{ .menu = try MenuState.init(game.*) });
+        game.state.change(.{ .menu = try MenuState.init(game.*) });
         return;
     }
 
