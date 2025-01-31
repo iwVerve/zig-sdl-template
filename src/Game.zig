@@ -117,7 +117,7 @@ pub fn update(self: *Game) !void {
                 self.input.press(event.key.keysym.sym);
             },
             c.SDL_KEYUP => {
-                self.input.press(event.key.keysym.sym);
+                self.input.release(event.key.keysym.sym);
             },
             else => {},
         }
