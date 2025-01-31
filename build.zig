@@ -54,12 +54,15 @@ fn addNativeBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, str
     inline for (sdl_dependencies) |sdl_dep| {
         linkSdlDependency(b, sdl_dep, exe, c);
     }
-    b.installArtifact(exe);
+
+    // b.installArtifact(exe);
+    const exe_install = b.addInstallArtifact(exe, .{ .dest_dir = .{ .override = .{ .custom = "desktop/bin" } } });
+    b.getInstallStep().dependOn(&exe_install.step);
 
     exe.root_module.addImport("c", c.createModule());
 
     inline for (config.install_dirs) |install_path| {
-        const install_dir = b.addInstallDirectory(.{ .source_dir = b.path(install_path), .install_dir = .{ .custom = "" }, .install_subdir = install_path });
+        const install_dir = b.addInstallDirectory(.{ .source_dir = b.path(install_path), .install_dir = .prefix, .install_subdir = "desktop/" ++ install_path });
         exe.step.dependOn(&install_dir.step);
     }
 
@@ -99,7 +102,7 @@ fn linkSdlDependency(b: *Build, comptime sdl_dep: SDLDependency, exe: *Compile, 
     const dep = b.dependency(sdl_dep.name, .{});
 
     const lib_file_name = sdl_dep.lib_name ++ ".dll";
-    const dll_install = b.addInstallBinFile(dep.path("lib/x64/" ++ lib_file_name), lib_file_name);
+    const dll_install = b.addInstallFile(dep.path("lib/x64/" ++ lib_file_name), b.pathJoin(&.{ "desktop/bin", lib_file_name }));
     exe.step.dependOn(&dll_install.step);
 
     exe.addLibraryPath(dep.path("lib/x64/"));
