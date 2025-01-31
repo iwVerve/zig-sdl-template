@@ -78,7 +78,7 @@ fn initGame(self: *Game) !void {
     self.last_time_count = c.SDL_GetPerformanceCounter();
     try self.assets.init(self.renderer);
 
-    self.state = .menu;
+    self.state = .{ .menu = try MenuState.init(self.*) };
     try self.tick(1 / self.tick_rate);
 }
 
@@ -162,4 +162,12 @@ fn draw(self: *Game, interpolation: f32) !void {
 export fn updateWrapper(self: *Game) c_int {
     self.update() catch return 1;
     return 0;
+}
+
+pub fn changeState(self: *Game, state: State) !void {
+    switch (self.state) {
+        .menu => |*m| m.deinit(),
+        else => {},
+    }
+    self.state = state;
 }
