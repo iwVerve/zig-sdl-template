@@ -1,6 +1,6 @@
 # Zig SDL Template
 
-Zig version: 0.14.0-dev.2287+70ad7dcd4
+Zig version: 0.14.0-dev.3020+c104e8644
 
 ## Features
 - Asset loading.

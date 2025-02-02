@@ -318,15 +318,15 @@ fn emLinkStep(b: *Build, options: EmLinkOptions) !*Run {
     const sysroot_include_path = if (b.sysroot) |sysroot| b.pathJoin(&.{ sysroot, "include" }) else @panic("");
 
     emcc.addArtifactArg(options.lib_main);
-    var it = options.lib_main.root_module.iterateDependencies(options.lib_main, false);
-    while (it.next()) |item| {
+    const compiles = options.lib_main.getCompileDependencies(true);
+    for (compiles) |compile| {
         if (maybe_emsdk_setup) |emsdk_setup| {
-            item.compile.?.step.dependOn(&emsdk_setup.step);
+            compile.step.dependOn(&emsdk_setup.step);
         }
         if (sysroot_include_path.len > 0) {
-            item.module.addSystemIncludePath(.{ .cwd_relative = sysroot_include_path });
+            compile.root_module.addSystemIncludePath(.{ .cwd_relative = sysroot_include_path });
         }
-        for (item.module.link_objects.items) |link_object| {
+        for (compile.root_module.link_objects.items) |link_object| {
             switch (link_object) {
                 .other_step => |compile_step| {
                     switch (compile_step.kind) {
