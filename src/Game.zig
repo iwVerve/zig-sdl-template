@@ -22,9 +22,11 @@ renderer: *c.SDL_Renderer = undefined,
 assets: Assets = .{},
 
 running: bool = true,
-tick_rate: f32 = config.default_tick_rate,
+// Initialized in initGame.
+tick_rate: f32 = undefined,
 last_time_count: u64 = undefined,
-tick_time_left: u64 = 0,
+tick_time_left: u64 = undefined,
+time_scale: f32 = undefined,
 debug_restart: bool = false,
 debug_reload: bool = false,
 
@@ -70,7 +72,11 @@ fn initWindow(self: *Game) !void {
 }
 
 fn initGame(self: *Game) !void {
+    self.tick_rate = config.default_tick_rate;
     self.last_time_count = c.SDL_GetPerformanceCounter();
+    self.tick_time_left = 0;
+    self.time_scale = 1;
+
     try self.assets.init(self.renderer);
 
     self.state = .{ .menu = try MenuState.init(self.*) };
@@ -131,7 +137,8 @@ pub fn update(self: *Game) !void {
     const max_time_per_frame: u64 = config.max_seconds_per_frame * c.SDL_GetPerformanceFrequency();
 
     const start = c.SDL_GetPerformanceCounter();
-    self.tick_time_left += @min(start - self.last_time_count, max_time_per_frame);
+    const frame_duration: u64 = @intFromFloat(self.time_scale * @as(f32, @floatFromInt((start - self.last_time_count))));
+    self.tick_time_left += @min(frame_duration, max_time_per_frame);
     self.last_time_count = start;
 
     const time_per_tick: u64 = @intFromFloat(@as(f32, @floatFromInt(c.SDL_GetPerformanceFrequency())) / self.tick_rate);
