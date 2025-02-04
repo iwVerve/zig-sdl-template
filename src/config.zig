@@ -25,4 +25,7 @@ pub const resolution = .{
 
 pub const max_seconds_per_frame = 1;
 
-pub const dll_reload_key: ?c_int = c.SDLK_F3;
+/// Restarts the game when pressed in dynamic builds. Set to null to disable.
+pub const debug_restart_key: ?c_int = c.SDLK_F2;
+/// Reloads game code when pressed in dynamic builds. Set to null to disable.
+pub const debug_reload_key: ?c_int = c.SDLK_F3;

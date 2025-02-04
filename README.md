@@ -13,8 +13,8 @@ Run `zig build reload` to rebuild the game dll, then press F3 to reload it manua
 ## Todo
 - Code hotreloading.
 - Asset hotreloading.
-- Input handling - controller supports, rebinds.
-- Saved data mananagement.
+- Input handling - controller support, rebinds.
+- Save data mananagement.
 - Documentation.
 
 ## Compiling

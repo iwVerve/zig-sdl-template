@@ -25,7 +25,8 @@ running: bool = true,
 tick_rate: f32 = config.default_tick_rate,
 last_time_count: u64 = undefined,
 tick_time_left: u64 = 0,
-should_reload_dll: bool = false,
+debug_restart: bool = false,
+debug_reload: bool = false,
 
 state: State = undefined,
 input: Input = .{},
@@ -77,7 +78,7 @@ fn initGame(self: *Game) !void {
 }
 
 pub export fn initWrapper(self: *Game) c_int {
-    self.init() catch return 1;
+    self.initGame() catch return 1;
     return 0;
 }
 
@@ -86,7 +87,7 @@ pub export fn deinit(self: *Game) void {
     self.deinitWindow();
 }
 
-fn deinitGame(self: *Game) void {
+pub fn deinitGame(self: *Game) void {
     self.assets.deinit();
     self.state.deinitCurrent();
 }
@@ -109,10 +110,16 @@ pub fn update(self: *Game) !void {
                 return;
             },
             c.SDL_KEYDOWN => {
-                if (build_options.mode == .dynamic and event.key.keysym.sym == config.dll_reload_key) {
-                    self.should_reload_dll = true;
+                const sym = event.key.keysym.sym;
+                if (build_options.mode == .dynamic) {
+                    if (sym == config.debug_restart_key) {
+                        self.debug_restart = true;
+                    }
+                    if (sym == config.debug_reload_key) {
+                        self.debug_reload = true;
+                    }
                 }
-                self.input.press(event.key.keysym.sym);
+                self.input.press(sym);
             },
             c.SDL_KEYUP => {
                 self.input.release(event.key.keysym.sym);
