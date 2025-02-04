@@ -1,3 +1,5 @@
+const c = @import("c");
+
 pub const game_title = "Zig SDL2 Template";
 
 // INSTALL
@@ -22,3 +24,5 @@ pub const resolution = .{
 };
 
 pub const max_seconds_per_frame = 1;
+
+pub const dll_reload_key: ?c_int = c.SDLK_F3;

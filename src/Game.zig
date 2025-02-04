@@ -1,6 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const c = @import("c");
+const build_options = @import("build_options");
 
 const Assets = @import("Assets.zig");
 const config = @import("config.zig");
@@ -24,6 +25,7 @@ running: bool = true,
 tick_rate: f32 = config.default_tick_rate,
 last_time_count: u64 = undefined,
 tick_time_left: u64 = 0,
+should_reload_dll: bool = false,
 
 state: State = undefined,
 input: Input = .{},
@@ -107,6 +109,9 @@ pub fn update(self: *Game) !void {
                 return;
             },
             c.SDL_KEYDOWN => {
+                if (build_options.mode == .dynamic and event.key.keysym.sym == config.dll_reload_key) {
+                    self.should_reload_dll = true;
+                }
                 self.input.press(event.key.keysym.sym);
             },
             c.SDL_KEYUP => {

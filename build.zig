@@ -42,7 +42,7 @@ pub fn build(b: *Build) !void {
 fn addNativeBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, strip: bool, options: *Options) void {
     // OPTIONS
 
-    const static = b.option(bool, "static", "Disable hotreloading") orelse false;
+    const static = b.option(bool, "static", "Disable hotreloading for release builds") orelse false;
     options.addOption(bool, "static", static);
 
     // COMPILE
@@ -137,7 +137,7 @@ fn addDynamicExecutable(b: *Build, target: ResolvedTarget, optimize: OptimizeMod
 }
 
 fn addMainExecutable(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, strip: bool) *Compile {
-    return b.addExecutabl(.{
+    return b.addExecutable(.{
         .name = config.game_title,
         .root_source_file = b.path("src/main.zig"),
         .target = target,

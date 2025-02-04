@@ -29,6 +29,10 @@ pub fn main() !void {
         .dynamic => {
             try hotreload.dllOpen();
             while (game.running) {
+                if (game.should_reload_dll) {
+                    try hotreload.dllReload();
+                    game.should_reload_dll = false;
+                }
                 if (hotreload.update_fn(&game) != 0) {
                     return error.Update;
                 }
