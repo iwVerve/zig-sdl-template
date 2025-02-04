@@ -8,7 +8,9 @@ Zig version: 0.14.0-dev.3020+c104e8644
 - SDL and Emscripten as dependencies of the build system.
 
 ## Code hotreloading
-Run `zig build reload` to rebuild the game dll, then press F3 to reload it manually. Key can be changed in config.zig.
+Run `zig build reload` to rebuild the game dll, then press F3 to reload it
+in game. F2 can be used to restart the game. Both keys can be changed in
+config.zig.
 
 ## Todo
 - Code hotreloading.
