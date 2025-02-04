@@ -10,6 +10,7 @@ const ResolvedTarget = Build.ResolvedTarget;
 const OptimizeMode = std.builtin.OptimizeMode;
 const LazyPath = Build.LazyPath;
 const ArrayList = std.ArrayList;
+const Options = Build.Step.Options;
 
 const sdl_dependencies: []const SDLDependency = &.{
     .{ .name = "sdl2", .lib_name = "SDL2" },
@@ -21,17 +22,23 @@ const sdl_dependencies: []const SDLDependency = &.{
 pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
+    const options = b.addOptions();
 
     const strip = b.option(bool, "strip", "") orelse false;
 
     if (target.result.os.tag == .emscripten) {
-        try addEmscriptenBuild(b, target, optimize);
+        try addEmscriptenBuild(b, target, optimize, options);
     } else {
-        addNativeBuild(b, target, optimize, strip);
+        addNativeBuild(b, target, optimize, strip, options);
     }
 }
 
-fn addNativeBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, strip: bool) void {
+fn addNativeBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, strip: bool, options: *Options) void {
+    // OPTIONS
+
+    const static = b.option(bool, "static", "Disable hotreloading") orelse false;
+    options.addOption(bool, "static", static);
+
     // COMPILE
 
     const c = b.addTranslateC(.{
@@ -40,26 +47,14 @@ fn addNativeBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, str
         .optimize = optimize,
         .link_libc = true,
     });
-    const exe = b.addExecutable(.{
-        .name = config.game_title,
-        .root_source_file = b.path("src/main.zig"),
-        .target = target,
-        .optimize = optimize,
-        .strip = strip,
-    });
-    if (target.result.os.tag == .windows and optimize != .Debug) {
-        exe.subsystem = .Windows;
-    }
 
-    inline for (sdl_dependencies) |sdl_dep| {
-        linkSdlDependency(b, sdl_dep, exe, c);
-    }
+    const exe = if (static)
+        addStaticExecutable(b, target, optimize, strip, c, options)
+    else
+        addDynamicExecutable(b, target, optimize, strip, c, options);
 
-    // b.installArtifact(exe);
     const exe_install = b.addInstallArtifact(exe, .{ .dest_dir = .{ .override = .{ .custom = "desktop/bin" } } });
     b.getInstallStep().dependOn(&exe_install.step);
-
-    exe.root_module.addImport("c", c.createModule());
 
     inline for (config.install_dirs) |install_path| {
         const install_dir = b.addInstallDirectory(.{ .source_dir = b.path(install_path), .install_dir = .prefix, .install_subdir = "desktop/" ++ install_path });
@@ -91,6 +86,60 @@ fn addNativeBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, str
     test_step.dependOn(&run_exe_unit_tests.step);
 }
 
+fn addStaticExecutable(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, strip: bool, c: *TranslateC, options: *Options) *Compile {
+    const exe = b.addExecutable(.{
+        .name = config.game_title,
+        .root_source_file = b.path("src/main.zig"),
+        .target = target,
+        .optimize = optimize,
+        .strip = strip,
+    });
+    if (target.result.os.tag == .windows and optimize != .Debug) {
+        exe.subsystem = .Windows;
+    }
+
+    inline for (sdl_dependencies) |sdl_dep| {
+        linkSdlDependency(b, sdl_dep, exe, c);
+    }
+
+    exe.root_module.addImport("c", c.createModule());
+    exe.root_module.addImport("build_options", options.createModule());
+
+    return exe;
+}
+
+fn addDynamicExecutable(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, strip: bool, c: *TranslateC, options: *Options) *Compile {
+    const dll = b.addSharedLibrary(.{
+        .name = config.game_title,
+        .root_source_file = b.path("src/Game.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    const exe = b.addExecutable(.{
+        .name = config.game_title,
+        .root_source_file = b.path("src/main.zig"),
+        .target = target,
+        .optimize = optimize,
+        .strip = strip,
+    });
+
+    const dll_install = b.addInstallArtifact(dll, .{
+        .dest_dir = .{ .override = .{ .custom = "desktop/bin" } },
+        .implib_dir = .disabled,
+    });
+    exe.step.dependOn(&dll_install.step);
+
+    inline for (.{ dll, exe }) |compile| {
+        compile.root_module.addImport("c", c.createModule());
+        compile.root_module.addImport("build_options", options.createModule());
+        inline for (sdl_dependencies) |sdl_dep| {
+            linkSdlDependency(b, sdl_dep, compile, c);
+        }
+    }
+
+    return exe;
+}
+
 // SDL
 
 const SDLDependency = struct {
@@ -112,7 +161,7 @@ fn linkSdlDependency(b: *Build, comptime sdl_dep: SDLDependency, exe: *Compile, 
 
 // EMSCRIPTEN
 
-fn addEmscriptenBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode) !void {
+fn addEmscriptenBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode, options: *Options) !void {
     const emsdk = b.dependency("emsdk", .{});
     const emsdk_sysroot = emsdk.path("upstream/emscripten/cache/sysroot");
     b.sysroot = emsdk_sysroot.getPath(b);
@@ -134,6 +183,7 @@ fn addEmscriptenBuild(b: *Build, target: ResolvedTarget, optimize: OptimizeMode)
         emsdk_sysroot,
     );
     exe.root_module.addImport("c", c.createModule());
+    exe.root_module.addImport("options", options.createModule());
 
     const linkStep = try emLinkStep(b, .{
         .lib_main = exe,

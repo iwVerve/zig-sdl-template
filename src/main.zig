@@ -1,6 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const c = @import("c");
+const build_options = @import("build_options");
 
 const Game = @import("Game.zig");
 
@@ -16,11 +17,11 @@ pub fn main() !void {
 
     if (builtin.target.isWasm()) {
         c.emscripten_set_main_loop_arg(&emscripten_main_loop, &game, 0, true);
-    } else {
+    } else if (build_options.static) {
         while (game.running) {
             try game.update();
         }
-    }
+    } else {}
 }
 
 fn emscripten_main_loop(game_ptr: ?*anyopaque) callconv(.C) void {
