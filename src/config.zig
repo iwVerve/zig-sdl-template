@@ -8,6 +8,10 @@ pub const install_dirs = &.{
     data_dir,
 };
 
+pub const static_build_path = "static";
+pub const dynamic_build_path = "dynamic";
+pub const web_build_path = "web";
+
 // GAME
 
 pub const default_tick_rate = 60;

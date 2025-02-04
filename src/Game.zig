@@ -64,15 +64,6 @@ fn initWindow(self: *Game) !void {
         -1,
         c.SDL_RENDERER_ACCELERATED | c.SDL_RENDERER_PRESENTVSYNC,
     ) orelse return error.CreateRenderer;
-
-    if (!builtin.target.isWasm()) {
-        const path = try std.fs.selfExeDirPathAlloc(self.allocator);
-        defer self.allocator.free(path);
-
-        var dir = try std.fs.openDirAbsolute(std.fs.path.dirname(path) orelse return error.Path, .{});
-        defer dir.close();
-        try dir.setAsCwd();
-    }
 }
 
 fn initGame(self: *Game) !void {
@@ -83,7 +74,7 @@ fn initGame(self: *Game) !void {
     try self.tick(1 / self.tick_rate);
 }
 
-export fn initWrapper(self: *Game) c_int {
+pub export fn initWrapper(self: *Game) c_int {
     self.init() catch return 1;
     return 0;
 }
@@ -161,7 +152,7 @@ fn draw(self: *Game, interpolation: f32) !void {
     c.SDL_RenderPresent(self.renderer);
 }
 
-export fn updateWrapper(self: *Game) c_int {
+pub export fn updateWrapper(self: *Game) c_int {
     self.update() catch return 1;
     return 0;
 }
