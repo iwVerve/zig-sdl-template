@@ -2,7 +2,7 @@ const std = @import("std");
 const c = @import("c");
 
 const config = @import("config.zig");
-const Texture = @import("core/Texture.zig").Texture;
+const Texture = @import("core.zig").Texture;
 
 const Assets = @This();
 

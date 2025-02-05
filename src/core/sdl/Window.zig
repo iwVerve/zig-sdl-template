@@ -1,8 +1,8 @@
 const c = @import("c");
 
-const WindowCore = @import("../Window.zig");
+const core = @import("../../core.zig");
 
-const CreateWindowOptions = WindowCore.CreateWindowOptions;
+const CreateWindowOptions = core.CreateWindowOptions;
 
 const Window = @This();
 
