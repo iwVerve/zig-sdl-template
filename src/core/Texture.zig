@@ -1,6 +1,4 @@
-const Impl = @import("impl.zig").Texture;
+pub const Texture = @import("impl.zig").Texture;
 
-const Texture = @This();
-
-pub const init = Impl.init;
-pub const deinit = Impl.deinit;
+pub const init = Texture.init;
+pub const deinit = Texture.deinit;

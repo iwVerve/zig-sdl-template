@@ -52,5 +52,5 @@ pub fn draw(self: Fox, camera: Camera, assets: Assets, interpolation: f32) void 
         .w = size.w,
         .h = size.h,
     };
-    camera.renderCopy(assets.fox, null, &rect);
+    camera.renderCopy(assets.fox.texture, null, &rect);
 }

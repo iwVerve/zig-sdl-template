@@ -2,6 +2,7 @@ const std = @import("std");
 const c = @import("c");
 
 const config = @import("config.zig");
+const Texture = @import("core/Texture.zig").Texture;
 
 const Assets = @This();
 
@@ -27,7 +28,7 @@ const asset_data = .{
     },
 };
 
-fox: *c.SDL_Texture = undefined,
+fox: Texture = undefined,
 speedup: [*c]c.Mix_Chunk = undefined,
 menu: *c.TTF_Font = undefined,
 
@@ -36,15 +37,7 @@ pub fn init(self: *Assets, renderer: *c.SDL_Renderer) !void {
         const field = &@field(self, texture_entry[0]);
         const path = asset_data.dir ++ asset_data.textures.path ++ texture_entry[1];
 
-        field.* = blk: {
-            const surface = c.IMG_Load(path) orelse {
-                std.debug.print("{s}\n", .{c.SDL_GetError()});
-                return error.IMGLoad;
-            };
-            defer c.SDL_FreeSurface(surface);
-
-            break :blk c.SDL_CreateTextureFromSurface(renderer, surface) orelse return error.CreateTexture;
-        };
+        field.* = try Texture.init(path, .{ .window = undefined, .renderer = renderer });
     }
 
     inline for (asset_data.sounds.entries) |sound_entry| {
@@ -71,12 +64,17 @@ pub fn init(self: *Assets, renderer: *c.SDL_Renderer) !void {
 
 pub fn deinit(self: *Assets) void {
     inline for (asset_data.textures.entries) |texture_entry| {
-        const field = @field(self, texture_entry[0]);
-        c.SDL_DestroyTexture(field);
+        var field = @field(self, texture_entry[0]);
+        Texture.deinit(&field);
     }
 
     inline for (asset_data.sounds.entries) |sound_entry| {
         const field = @field(self, sound_entry[0]);
         c.Mix_FreeChunk(field);
+    }
+
+    inline for (asset_data.fonts.entries) |font_entry| {
+        const field = @field(self, font_entry[0]);
+        c.TTF_CloseFont(field);
     }
 }
