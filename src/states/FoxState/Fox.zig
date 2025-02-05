@@ -10,7 +10,7 @@ const Camera = @import("../../Camera.zig");
 const Fox = @This();
 
 angle: f32,
-position: util.InterpolatedVector2,
+position: util.InterpolatedVector2(f32),
 
 const center = .{ .x = config.resolution.width / 2, .y = config.resolution.height / 2 };
 const size = .{ .w = 64, .h = 64 };
@@ -20,7 +20,7 @@ const degrees_per_second = 90;
 pub fn init(starting_angle: f32) Fox {
     return .{
         .angle = starting_angle,
-        .position = util.InterpolatedVector2.init(getPosition(starting_angle)),
+        .position = util.InterpolatedVector2(f32).init(getPosition(starting_angle)),
     };
 }
 
@@ -35,7 +35,7 @@ pub fn update(self: *Fox, delta_time: f32, game: *Game) void {
     self.position.set(getPosition(self.angle));
 }
 
-fn getPosition(angle: f32) util.Vector2 {
+fn getPosition(angle: f32) util.Vector2(f32) {
     const math = std.math;
 
     return .{

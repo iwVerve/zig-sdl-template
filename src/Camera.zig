@@ -9,9 +9,9 @@ const Vector2 = util.Vector2;
 const Camera = @This();
 
 renderer: *c.SDL_Renderer,
-position: Vector2 = .{},
+position: Vector2(f32) = .{},
 
-pub fn worldToScreen(self: Camera, position: Vector2) Vector2 {
+pub fn worldToScreen(self: Camera, position: Vector2(f32)) Vector2(f32) {
     return .{
         .x = position.x - self.position.x,
         .y = position.y - self.position.y,
