@@ -5,6 +5,7 @@ const config = @import("../../config.zig");
 const util = @import("../../util.zig");
 const Assets = @import("../../Assets.zig");
 const Game = @import("../../Game.zig");
+const Camera = @import("../../Camera.zig");
 
 const Fox = @This();
 
@@ -43,13 +44,13 @@ fn getPosition(angle: f32) util.Vector2 {
     };
 }
 
-pub fn draw(self: Fox, renderer: *c.SDL_Renderer, assets: Assets, interpolation: f32) void {
+pub fn draw(self: Fox, camera: Camera, assets: Assets, interpolation: f32) void {
     const draw_pos = self.position.get(interpolation);
-    const rect: c.SDL_Rect = .{
+    var rect: c.SDL_Rect = .{
         .x = @intFromFloat(draw_pos.x),
         .y = @intFromFloat(draw_pos.y),
         .w = size.w,
         .h = size.h,
     };
-    _ = c.SDL_RenderCopy(renderer, assets.fox, null, &rect);
+    camera.renderCopy(assets.fox, null, &rect);
 }

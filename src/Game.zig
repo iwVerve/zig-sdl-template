@@ -61,7 +61,7 @@ fn initWindow(self: *Game) !void {
         c.SDL_WINDOWPOS_UNDEFINED,
         config.resolution.width,
         config.resolution.height,
-        c.SDL_WINDOW_SHOWN,
+        c.SDL_WINDOW_SHOWN | c.SDL_WINDOW_RESIZABLE,
     ) orelse return error.CreateWindow;
 
     self.renderer = c.SDL_CreateRenderer(
@@ -129,6 +129,10 @@ pub fn update(self: *Game) !void {
             },
             c.SDL_KEYUP => {
                 self.input.release(event.key.keysym.sym);
+            },
+            c.SDL_WINDOWEVENT_RESIZED => {
+                _ = c.SDL_UpdateWindowSurface(self.window);
+                _ = c.SDL_RenderSetScale(self.renderer, 1, 1);
             },
             else => {},
         }

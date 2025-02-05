@@ -1,8 +1,8 @@
 const std = @import("std");
 
 pub const Vector2 = struct {
-    x: f32,
-    y: f32,
+    x: f32 = 0,
+    y: f32 = 0,
 };
 
 pub const InterpolatedVector2 = struct {

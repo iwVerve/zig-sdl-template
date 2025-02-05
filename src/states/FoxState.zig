@@ -5,14 +5,17 @@ const Assets = @import("../Assets.zig");
 const Fox = @import("FoxState/Fox.zig");
 const Game = @import("../Game.zig");
 const MenuState = @import("MenuState.zig");
+const Camera = @import("../Camera.zig");
 
 const FoxState = @This();
 
 fox: Fox,
+camera: Camera,
 
-pub fn init(starting_angle: f32) FoxState {
+pub fn init(game: Game, starting_angle: f32) FoxState {
     return .{
         .fox = Fox.init(starting_angle),
+        .camera = .{ .renderer = game.renderer },
     };
 }
 
@@ -31,5 +34,5 @@ pub fn draw(self: FoxState, renderer: *c.SDL_Renderer, assets: Assets, interpola
     _ = c.SDL_SetRenderDrawColor(renderer, 127, 255, 255, 255);
     _ = c.SDL_RenderClear(renderer);
 
-    self.fox.draw(renderer, assets, interpolation);
+    self.fox.draw(self.camera, assets, interpolation);
 }
