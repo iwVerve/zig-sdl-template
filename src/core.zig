@@ -6,6 +6,7 @@ pub const Camera = core.Camera;
 pub const Sound = core.Sound;
 pub const Font = core.Font;
 pub const Event = core.Event;
+pub const keyboard = core.keyboard;
 
 pub const getTimer = core.getTimer;
 pub const getTimerFrequency = core.getTimerFrequency;

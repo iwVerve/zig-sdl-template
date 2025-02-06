@@ -1,5 +1,7 @@
 const std = @import("std");
-const c = @import("c");
+
+const core = @import("core.zig");
+const keyboard = core.keyboard;
 
 const Input = @This();
 
@@ -29,9 +31,9 @@ const KeyInput = struct {
     }
 };
 
-confirm: KeyInput = .{ .key = c.SDLK_RETURN },
-exit: KeyInput = .{ .key = c.SDLK_ESCAPE },
-speedup: KeyInput = .{ .key = c.SDLK_SPACE },
+confirm: KeyInput = .{ .key = keyboard.enter },
+exit: KeyInput = .{ .key = keyboard.escape },
+speedup: KeyInput = .{ .key = keyboard.space },
 
 pub const key_names = .{ "confirm", "exit", "speedup" };
 
