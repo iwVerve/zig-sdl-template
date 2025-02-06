@@ -36,6 +36,20 @@ pub fn open(path: []const u8, window: Window) !Texture {
     };
 }
 
+pub fn fromSdlTexture(texture: *c.SDL_Texture) Texture {
+    var width: c_int = undefined;
+    var height: c_int = undefined;
+    _ = c.SDL_QueryTexture(texture, null, null, &width, &height);
+
+    return .{
+        .texture = texture,
+        .size = .{
+            .x = @intCast(width),
+            .y = @intCast(height),
+        },
+    };
+}
+
 pub fn deinit(self: *Texture) void {
     c.SDL_DestroyTexture(self.texture);
 }

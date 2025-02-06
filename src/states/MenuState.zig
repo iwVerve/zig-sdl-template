@@ -1,5 +1,4 @@
 const std = @import("std");
-const c = @import("c");
 
 const Assets = @import("../Assets.zig");
 const Game = @import("../Game.zig");
@@ -23,23 +22,10 @@ const text =
 text_texture: Texture = undefined,
 
 pub fn init(game: Game) !MenuState {
-    const surface = c.TTF_RenderUTF8_Blended_Wrapped(game.assets.menu.font, text, .{ .r = 255, .g = 255, .b = 255 }, 1024);
-    defer c.SDL_FreeSurface(surface);
-
-    const texture = c.SDL_CreateTextureFromSurface(game.window.renderer, surface) orelse return error.CreateTextureFromSurface;
-
-    var width: c_int = undefined;
-    var height: c_int = undefined;
-    _ = c.SDL_QueryTexture(texture, null, null, &width, &height);
+    const texture = try game.assets.menu.drawText(text, game.window, .{ .r = 255, .g = 255, .b = 255 }, null);
 
     return .{
-        .text_texture = .{
-            .texture = texture,
-            .size = .{
-                .x = @intCast(width),
-                .y = @intCast(height),
-            },
-        },
+        .text_texture = texture,
     };
 }
 
