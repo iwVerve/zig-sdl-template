@@ -1,7 +1,7 @@
 const core = @import("core.zig");
 const keyboard = core.keyboard;
 
-pub const game_title = "Zig SDL2 Template";
+pub const game_title = "fxgfw";
 
 // INSTALL
 

@@ -1,4 +1,4 @@
-# Zig SDL Template
+# fxgfw
 
 Zig version: 0.14.0-dev.3020+c104e8644
 
