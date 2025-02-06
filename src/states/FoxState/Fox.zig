@@ -1,5 +1,4 @@
 const std = @import("std");
-const c = @import("c");
 
 const config = @import("../../config.zig");
 const util = @import("../../util.zig");
@@ -28,7 +27,7 @@ pub fn init(starting_angle: f32) Fox {
 
 pub fn update(self: *Fox, delta_time: f32, game: *Game) void {
     if (game.input.speedup.pressed) {
-        _ = c.Mix_PlayChannel(-1, game.assets.speedup, 0);
+        game.assets.speedup.play();
     }
 
     const actual_degrees_per_second = @as(f32, if (game.input.speedup.held) 2 else 1) * degrees_per_second;

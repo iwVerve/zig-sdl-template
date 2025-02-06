@@ -1,5 +1,4 @@
 const std = @import("std");
-const c = @import("c");
 
 const Assets = @import("../Assets.zig");
 const Fox = @import("FoxState/Fox.zig");

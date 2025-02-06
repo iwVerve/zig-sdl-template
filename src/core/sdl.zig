@@ -3,6 +3,8 @@ const c = @import("c");
 pub const Texture = @import("sdl/Texture.zig");
 pub const Window = @import("sdl/Window.zig");
 pub const Camera = @import("sdl/Camera.zig");
+pub const Font = @import("sdl/Font.zig");
+pub const Sound = @import("sdl/Sound.zig");
 
 pub fn getTimer() u64 {
     return c.SDL_GetPerformanceCounter();
