@@ -84,7 +84,7 @@ pub fn clear(self: *Window) void {
     _ = c.SDL_RenderClear(self.renderer);
 }
 
-pub fn drawTexture(self: *Window, texture: Texture, source: ?Rectangle(u32), destination: Rectangle(u32)) void {
+pub fn drawTexture(self: *Window, texture: Texture, source: ?Rectangle(i32), destination: Rectangle(i32)) void {
     const source_c: ?*c.SDL_Rect = if (source) |actual_source| blk: {
         var rect: c.SDL_Rect = .{
             .x = @intCast(actual_source.x),

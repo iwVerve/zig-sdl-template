@@ -44,7 +44,7 @@ pub fn update(game: *Game, delta_time: f32) !void {
     }
 
     if (game.input.confirm.pressed) {
-        game.state.change(.{ .fox = FoxState.init(game.*, 0) });
+        game.state.change(.{ .fox = FoxState.init(game, 0) });
         return;
     }
 }
@@ -56,7 +56,7 @@ pub fn draw(self: MenuState, window: *Window, assets: Assets, interpolation: f32
     window.setDrawColor(.{});
     window.clear();
 
-    const rect: Rectangle(u32) = .{
+    const rect: Rectangle(i32) = .{
         .x = 32,
         .y = 32,
         .width = @intCast(self.text_texture.size.x),

@@ -8,7 +8,7 @@ const Vector2 = util.Vector2;
 const Texture = @This();
 
 texture: *c.SDL_Texture,
-size: Vector2(u32),
+size: Vector2(i32),
 
 pub fn open(path: []const u8, window: Window) !Texture {
     const surface = c.IMG_Load(path.ptr) orelse {
@@ -25,20 +25,6 @@ pub fn open(path: []const u8, window: Window) !Texture {
     var width: c_int = undefined;
     var height: c_int = undefined;
 
-    _ = c.SDL_QueryTexture(texture, null, null, &width, &height);
-
-    return .{
-        .texture = texture,
-        .size = .{
-            .x = @intCast(width),
-            .y = @intCast(height),
-        },
-    };
-}
-
-pub fn fromSdlTexture(texture: *c.SDL_Texture) Texture {
-    var width: c_int = undefined;
-    var height: c_int = undefined;
     _ = c.SDL_QueryTexture(texture, null, null, &width, &height);
 
     return .{

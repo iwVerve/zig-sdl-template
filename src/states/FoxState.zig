@@ -11,10 +11,9 @@ const FoxState = @This();
 
 fox: Fox,
 
-pub fn init(game: Game, starting_angle: f32) FoxState {
-    _ = game;
+pub fn init(game: *Game, starting_angle: f32) FoxState {
     return .{
-        .fox = Fox.init(starting_angle),
+        .fox = Fox.init(&game.assets, starting_angle),
     };
 }
 
@@ -30,8 +29,10 @@ pub fn update(game: *Game, delta_time: f32) !void {
 }
 
 pub fn draw(self: FoxState, window: *Window, assets: Assets, interpolation: f32) void {
+    _ = assets;
+
     window.setDrawColor(.{ .r = 127, .g = 255, .b = 255 });
     window.clear();
 
-    self.fox.draw(window, assets, interpolation);
+    self.fox.draw(window, interpolation);
 }

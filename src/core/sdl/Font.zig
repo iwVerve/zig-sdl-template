@@ -4,6 +4,7 @@ const Texture = @import("Texture.zig");
 const Window = @import("Window.zig");
 const util = @import("../../util.zig");
 const Color = util.Color;
+const sdl_util = @import("util.zig");
 
 const Font = @This();
 
@@ -26,5 +27,5 @@ pub fn drawText(self: Font, text: []const u8, window: Window, color: Color, wrap
     defer c.SDL_FreeSurface(surface);
 
     const texture = c.SDL_CreateTextureFromSurface(window.renderer, surface) orelse return error.CreateTextureFromSurface;
-    return Texture.fromSdlTexture(texture);
+    return sdl_util.textureFromSdlTexture(texture);
 }
