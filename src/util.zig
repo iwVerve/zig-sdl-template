@@ -43,3 +43,10 @@ pub fn Rectangle(comptime T: type) type {
         height: T,
     };
 }
+
+pub const Color = struct {
+    r: u8 = 0,
+    g: u8 = 0,
+    b: u8 = 0,
+    a: u8 = 255,
+};

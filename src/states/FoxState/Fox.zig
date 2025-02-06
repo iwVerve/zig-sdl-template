@@ -5,7 +5,9 @@ const config = @import("../../config.zig");
 const util = @import("../../util.zig");
 const Assets = @import("../../Assets.zig");
 const Game = @import("../../Game.zig");
-const Camera = @import("../../Camera.zig");
+const core = @import("../../core.zig");
+const Window = core.Window;
+const Rectangle = util.Rectangle;
 
 const Fox = @This();
 
@@ -13,7 +15,7 @@ angle: f32,
 position: util.InterpolatedVector2(f32),
 
 const center = .{ .x = config.resolution.width / 2, .y = config.resolution.height / 2 };
-const size = .{ .w = 64, .h = 64 };
+const size = .{ .width = 64, .height = 64 };
 const distance = 96;
 const degrees_per_second = 90;
 
@@ -39,18 +41,19 @@ fn getPosition(angle: f32) util.Vector2(f32) {
     const math = std.math;
 
     return .{
-        .x = center.x - size.w / 2 + distance * @cos(math.degreesToRadians(angle)),
-        .y = center.y - size.h / 2 - distance * @sin(math.degreesToRadians(angle)),
+        .x = center.x - size.width / 2 + distance * @cos(math.degreesToRadians(angle)),
+        .y = center.y - size.height / 2 - distance * @sin(math.degreesToRadians(angle)),
     };
 }
 
-pub fn draw(self: Fox, camera: Camera, assets: Assets, interpolation: f32) void {
+pub fn draw(self: Fox, window: *Window, assets: Assets, interpolation: f32) void {
     const draw_pos = self.position.get(interpolation);
-    var rect: c.SDL_Rect = .{
+    const rect: Rectangle(u32) = .{
         .x = @intFromFloat(draw_pos.x),
         .y = @intFromFloat(draw_pos.y),
-        .w = size.w,
-        .h = size.h,
+        .width = size.width,
+        .height = size.height,
     };
-    camera.renderCopy(assets.fox.texture, null, &rect);
+
+    window.drawTexture(assets.fox, null, rect);
 }

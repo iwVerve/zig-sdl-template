@@ -4,6 +4,8 @@ const c = @import("c");
 const Assets = @import("../Assets.zig");
 const Game = @import("../Game.zig");
 const FoxState = @import("FoxState.zig");
+const core = @import("../core.zig");
+const Window = core.Window;
 
 const MenuState = @This();
 
@@ -21,7 +23,7 @@ pub fn init(game: Game) !MenuState {
     const surface = c.TTF_RenderUTF8_Blended_Wrapped(game.assets.menu, text, .{ .r = 255, .g = 255, .b = 255 }, 1024);
     defer c.SDL_FreeSurface(surface);
 
-    const texture = c.SDL_CreateTextureFromSurface(game.renderer, surface) orelse return error.CreateTextureFromSurface;
+    const texture = c.SDL_CreateTextureFromSurface(game.window.renderer, surface) orelse return error.CreateTextureFromSurface;
 
     return .{
         .text_texture = texture,
@@ -48,12 +50,12 @@ pub fn update(game: *Game, delta_time: f32) !void {
     }
 }
 
-pub fn draw(self: MenuState, renderer: *c.SDL_Renderer, assets: Assets, interpolation: f32) void {
+pub fn draw(self: MenuState, window: *Window, assets: Assets, interpolation: f32) void {
     _ = interpolation;
     _ = assets;
 
-    _ = c.SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    _ = c.SDL_RenderClear(renderer);
+    window.setDrawColor(.{});
+    window.clear();
 
     var width: c_int = undefined;
     var height: c_int = undefined;
@@ -66,5 +68,5 @@ pub fn draw(self: MenuState, renderer: *c.SDL_Renderer, assets: Assets, interpol
         .h = height,
     };
 
-    _ = c.SDL_RenderCopy(renderer, self.text_texture, null, &rect);
+    _ = c.SDL_RenderCopy(window.renderer, self.text_texture, null, &rect);
 }
