@@ -28,8 +28,18 @@ pub fn init(game: Game) !MenuState {
 
     const texture = c.SDL_CreateTextureFromSurface(game.window.renderer, surface) orelse return error.CreateTextureFromSurface;
 
+    var width: c_int = undefined;
+    var height: c_int = undefined;
+    _ = c.SDL_QueryTexture(texture, null, null, &width, &height);
+
     return .{
-        .text_texture = .{ .texture = texture },
+        .text_texture = .{
+            .texture = texture,
+            .size = .{
+                .x = @intCast(width),
+                .y = @intCast(height),
+            },
+        },
     };
 }
 
@@ -60,15 +70,11 @@ pub fn draw(self: MenuState, window: *Window, assets: Assets, interpolation: f32
     window.setDrawColor(.{});
     window.clear();
 
-    var width: c_int = undefined;
-    var height: c_int = undefined;
-    _ = c.SDL_QueryTexture(self.text_texture.texture, null, null, &width, &height);
-
     const rect: Rectangle(u32) = .{
         .x = 32,
         .y = 32,
-        .width = @intCast(width),
-        .height = @intCast(height),
+        .width = @intCast(self.text_texture.size.x),
+        .height = @intCast(self.text_texture.size.y),
     };
 
     window.drawTexture(self.text_texture, null, rect);
