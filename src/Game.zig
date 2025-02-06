@@ -13,6 +13,7 @@ const FoxState = states.FoxState;
 const Input = @import("Input.zig");
 const core = @import("core.zig");
 const Window = core.Window;
+const Event = core.Event;
 
 const Allocator = std.mem.Allocator;
 
@@ -72,29 +73,26 @@ pub fn deinitGame(self: *Game) void {
 }
 
 pub fn update(self: *Game) !void {
-    var event: c.SDL_Event = undefined;
-    while (c.SDL_PollEvent(&event) != 0) {
-        switch (event.type) {
-            c.SDL_QUIT => {
+    while (Event.poll()) |event| {
+        switch (event) {
+            .quit => {
                 self.running = false;
                 return;
             },
-            c.SDL_KEYDOWN => {
-                const sym = event.key.keysym.sym;
+            .key_down => |e| {
                 if (build_options.mode == .dynamic) {
-                    if (sym == config.debug_restart_key) {
+                    if (e.index == config.debug_restart_key) {
                         self.debug_restart = true;
                     }
-                    if (sym == config.debug_reload_key) {
+                    if (e.index == config.debug_reload_key) {
                         self.debug_reload = true;
                     }
                 }
-                self.input.press(sym);
+                self.input.press(e.index);
             },
-            c.SDL_KEYUP => {
-                self.input.release(event.key.keysym.sym);
+            .key_up => |e| {
+                self.input.release(e.index);
             },
-            else => {},
         }
     }
 
